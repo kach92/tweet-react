@@ -59,9 +59,30 @@ class Time extends React.Component {
 
 
 class Entity extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            isHovering : false
+        }
+        this.mouseHover = this.mouseHover.bind(this)
+    }
+
+    mouseHover(){
+        console.log("YESY")
+        this.setState(this.toggleHoverState);
+
+    }
+
+    toggleHoverState(state){
+        return {
+            isHovering : !state.isHovering
+        }
+    }
+
     render(){
         let text = this.props.tweet.text;
         let urls = this.props.tweet.entities.urls
+        let mentions = this.props.tweet.entities.user_mentions
 
         if(urls.length>0){
             urls.map(url_entity=>{
@@ -81,6 +102,26 @@ class Entity extends React.Component {
 
                 }
 
+            })
+        }
+
+        if(mentions.length>0){
+            mentions.map(mention =>{
+                if(text.includes(mention.name)){
+                    text = text.split(" ")
+                    let index = text.indexOf("@"+mention.name)
+                    text[index] = <span class="mention-container"><span class="mentions" onMouseEnter={this.mouseHover} onMouseLeave={this.mouseHover}>@{mention.name}</span>{this.state.isHovering && <div class="hover-div">blablabla</div>}</span>
+                    let result = []
+                    for(let i = 0; i < text.length; i++){
+                        let temp = [text[i]]
+                        let empty = [" "]
+                        result = result.concat(temp)
+                        result = result.concat(empty)
+                    }
+                    result.pop()
+                    text = result
+
+                }
             })
         }
 
